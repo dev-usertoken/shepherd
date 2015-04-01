@@ -9,7 +9,7 @@
   }
 }(this, function(Tether) {
 
-/*! shepherd 0.5.1 */
+/*! shepherd 0.7.0 */
 (function() {
   var ATTACHMENT, Evented, Shepherd, Step, Tour, addClass, createFromHTML, extend, getBounds, hasClass, matchesSelector, parseShorthand, removeClass, uniqueId, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -24,7 +24,8 @@
     'top': 'bottom center',
     'left': 'middle right',
     'right': 'middle left',
-    'bottom': 'top center'
+    'bottom': 'top center',
+    'center': 'middle center'
   };
 
   createFromHTML = function(html) {
@@ -170,6 +171,7 @@
 
     Step.prototype.show = function() {
       var _this = this;
+      this.trigger('before-show');
       if (this.el == null) {
         this.render();
       }
@@ -186,6 +188,7 @@
 
     Step.prototype.hide = function() {
       var _ref1;
+      this.trigger('before-hide');
       removeClass(this.el, 'shepherd-open');
       document.body.removeAttribute('data-shepherd-step');
       if ((_ref1 = this.tether) != null) {
@@ -212,7 +215,11 @@
     Step.prototype.scrollTo = function() {
       var element;
       element = this.getAttachTo().element;
-      return element != null ? element.scrollIntoView() : void 0;
+      if (this.options.scrollToHandler != null) {
+        return this.options.scrollToHandler(element);
+      } else {
+        return element != null ? element.scrollIntoView() : void 0;
+      }
     };
 
     Step.prototype.destroy = function() {
